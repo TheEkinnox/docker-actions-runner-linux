@@ -8,7 +8,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 LABEL Author="Loïck Noa Obiang Ndong"
 LABEL Email="lnobiang@noxcorporation.net"
 LABEL GitHub="https://github.com/TheEkinnox"
-LABEL BaseImage="ubuntu:20.04"
+LABEL BaseImage="ubuntu:22.04"
 LABEL RunnerVersion=${RUNNER_VERSION}
 
 # update the base packages + add a non-sudo user
