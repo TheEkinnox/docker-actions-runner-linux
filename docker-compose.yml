@@ -1,7 +1,7 @@
 ---
 services:
   runner:
-    image: github-runner-unx:latest
+    image: github-runner-lnx:latest
     platform: linux
     deploy:
       mode: replicated
@@ -9,6 +9,8 @@ services:
     build:
       context: .
       args:
-        RUNNER_VERSION: '2.320.0'
-    env_file:
-      ../.env
+        RUNNER_VERSION: '2.335.1'
+    volumes:
+      - type: bind
+        source: ./.env
+        target: /home/docker/.env
