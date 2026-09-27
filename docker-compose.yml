@@ -8,9 +8,6 @@ services:
       replicas: 1
     build:
       context: .
-      args:
-        RUNNER_VERSION: '2.335.1'
     volumes:
-      - type: bind
-        source: ./.env
-        target: /home/docker/.env
+      - ./.env:/home/docker/.env
+        

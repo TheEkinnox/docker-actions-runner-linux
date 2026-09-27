@@ -25,17 +25,21 @@ for (( i=0; i<${#REPOS[@]}; ++i)); do
 
     RUNNER_SUFFIX=$(cat /dev/urandom | tr -dc 'a-z0-9' | fold -w 5 | head -n 1)
     RUNNER_NAME="dockerNode-${RUNNER_SUFFIX}"
-    REG_TOKEN=$(curl -sX POST -H "Accept: application/vnd.github.v3+json" -H "Authorization: token ${GH_TOKEN}" https://api.github.com/repos/${GH_OWNER}/${REPOSITORY}/actions/runners/registration-token | jq .token --raw-output)
+    REG_TOKEN=$(curl -sX POST -H "Accept: application/vnd.github+json" -H "Authorization: Bearer ${GH_TOKEN}" -H "X-GitHub-Api-Version: 2026-03-10" https://api.github.com/repos/${GH_OWNER}/${REPOSITORY}/actions/runners/registration-token | jq .token --raw-output)
 
     mkdir -p /home/docker/actions-runner/runner-${REPOSITORY}
     cd /home/docker/actions-runner/runner-${REPOSITORY}
     tar -xzf ../actions-runner.tar.gz -C /home/docker/actions-runner/runner-${REPOSITORY}
 
-    ./config.sh remove --unattended --token ${REG_TOKEN}
+	echo Removing existing...
+    ./config.sh remove --token ${REG_TOKEN}
+
+	echo Reconfiguring...
     ./config.sh --unattended --url https://github.com/${GH_OWNER}/${REPOSITORY} --token ${REG_TOKEN} --name ${RUNNER_NAME}
 
     REG_TOKENS+=( ${REG_TOKEN} )
 
+	echo Running...
     if [ $(($i + 1)) -lt ${#REPOS[@]} ]; then
         ./run.sh &
     else

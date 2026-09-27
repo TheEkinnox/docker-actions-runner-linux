@@ -1,15 +1,12 @@
 # base image
 FROM ubuntu:22.04
 
-#input GitHub runner version argument
-ARG RUNNER_VERSION
 ENV DEBIAN_FRONTEND=noninteractive
 
 LABEL Author="Loïck Noa Obiang Ndong"
 LABEL Email="lnobiang@noxcorporation.net"
 LABEL GitHub="https://github.com/TheEkinnox"
 LABEL BaseImage="ubuntu:22.04"
-LABEL RunnerVersion=${RUNNER_VERSION}
 
 # update the base packages + add a non-sudo user
 RUN apt-get update -y && apt-get upgrade -y && useradd -m docker
@@ -20,7 +17,9 @@ RUN apt-get install -y --no-install-recommends \
 
 # cd into the user directory, download and unzip the github actions runner
 RUN cd /home/docker && mkdir actions-runner && cd actions-runner \
-    && curl -o actions-runner.tar.gz -L https://github.com/actions/runner/releases/download/v${RUNNER_VERSION}/actions-runner-linux-x64-${RUNNER_VERSION}.tar.gz \
+    && curl -s "https://api.github.com/repos/actions/runner/releases/latest" \
+        | grep -oP '"browser_download_url":\s*"\Khttps://[^"]*actions-runner-linux-x64-[^"]*\.tar.gz' \
+        | wget -O actions-runner.tar.gz -i - \
     && mkdir tmp && tar xzf ./actions-runner.tar.gz -C tmp
 
 # install some additional dependencies and get rid of the temporary folder
